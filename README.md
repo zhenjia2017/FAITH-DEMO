@@ -1,7 +1,7 @@
 
 # FAITH: A Demonstration System for Faithful Temporal Question Answering
 
-Description
+## Description
 ------
 This repo is for the FAITH demo. The video is available at [LINK](https://www.youtube.com/watch?v=O_kngz1S5zU).
 
@@ -15,11 +15,40 @@ Temporal question answering (TQA) aims to answer questions that involve temporal
 <div style="text-align: center;"><img src="demo.png"  alt="overview" width=80%  /></div>
 
 
-### Dependencies
+## Dependencies
 TQA backend is based on our WWW'24 full paper "Faithful Temporal Question Answering over Heterogeneous Sources".
 
 For more details see our paper: [Faithful Temporal Question Answering over Heterogeneous Sources](https://dl.acm.org/doi/10.1145/3589334.3645547) and visit our project website: https://faith.mpi-inf.mpg.de.
 
+### Deploy self-hosted Wikipedia
+
+ - Download Kiwix
+```bash
+wget https://download.kiwix.org/release/kiwix-tools/kiwix-tools_linux-x86_64.tar.gz
+```
+
+ - Decompress the downloaded file
+```bash
+tar -xzf kiwix-tools_linux-x86_64.tar.gz
+```
+
+ - Enter the directory that contains kiwix-serve, create a zims folder, and then enter that folder.
+```bash
+cd kiwix-tools_linux-x86_64
+mkdir zims
+cd zims
+```
+
+ - Download zim file (replace \<zim> with the ZIM file name.)
+```bash
+wget https://www.mirrorservice.org/sites/download.kiwix.org/zim/wikipedia/<zim>
+```
+
+ - Start Kiwix service (replace \<zim> with the relative path to the ZIM file.)
+```bash
+./kiwix-serve --port=<local-port> <zim>
+```
+ - Open the browser and visit http://localhost:<local-port> to view it 
 
 ### Flask API
 faith_api.py: Flask framework providing the API service.
