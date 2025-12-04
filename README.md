@@ -20,9 +20,10 @@ TQA backend is based on our WWW'24 full paper "Faithful Temporal Question Answer
 
 For more details see our paper: [Faithful Temporal Question Answering over Heterogeneous Sources](https://dl.acm.org/doi/10.1145/3589334.3645547) and visit our project website: https://faith.mpi-inf.mpg.de.
 
-### Deploy self-hosted Wikipedia
+### Self-hosted Wikipedia service
+The demonstration system works on a locally hosted Wikipedia service. The deployment methods are as follows.
 
- - Download Kiwix
+- Download Kiwix
 ```bash
 wget https://download.kiwix.org/release/kiwix-tools/kiwix-tools_linux-x86_64.tar.gz
 ```
