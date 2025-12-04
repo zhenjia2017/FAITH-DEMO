@@ -51,14 +51,17 @@ wget https://www.mirrorservice.org/sites/download.kiwix.org/zim/wikipedia/<zim>
 ```
  - Open the browser and visit http://localhost:<local-port> to view it 
 
-### Flask API
-faith_api.py: Flask framework providing the API service.
+## Code and its functionality
+ ### Flask API
+faith_api.py: Flask framework providing the API service
 
-### TQA backend
-faith_backend.py: TQA backend main program.
+ ### TQA backend
+faith: TQA backend
 
-### UI
-The implementation scripts for UI are in the "ui" folder. 
+faith/faith_backend.py: TQA backend main program
+
+ ### UI
+The implementation scripts for UI are in the "ui" folder
 
 ## Feedback
 Any feedback are welcome! Please contact us via mail: [zjia@swjtu.edu.cn](mailto:zjia@swjtu.edu.cn).
