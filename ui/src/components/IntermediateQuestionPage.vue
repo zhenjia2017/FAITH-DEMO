@@ -90,7 +90,7 @@ const questionCardProps = reactive<{
   selectedTypes: ['text', 'kb', 'table', 'infobox']
 });
 
-// 监听数据变化更新 props
+// Watch data changes to update props
 watch(currentQuestion, (newQuestion) => {
   questionCardProps.question = newQuestion;
 });

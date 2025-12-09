@@ -48,22 +48,7 @@
             @question-submitted="handleQuestionSubmitted" />
         </div>
 
-        <!-- Configuration Card -->
-        <!-- <BCard class="mt-4 mb-4 no-hover">
-          <Configuration 
-            @example-selected="onExampleSelected" 
-            @config-changed="handleConfigChanged" />
-        </BCard> -->
-
-        <!-- Start Button -->
-        <!-- <div class="text-center mb-4">
-          <BButton variant="primary" size="lg" @click="startAnalysis" :disabled="!canStart">
-            <i class="bi bi-play-fill me-2"></i>
-            Start Analysis
-          </BButton>
-        </div> -->
-
-        <!-- 引入模态框组件 -->
+        <!-- Modal components -->
         <IntroductionModal
           v-model="showIntroductionModal"
           @close="handleModalClose('introduction')"
@@ -119,13 +104,13 @@ const configData = ref({
   selectedRadioType3: 'timequestions'
 });
 
-// 控制模态框显示与隐藏的变量
+// Modal visibility flags
 const showIntroductionModal = ref(false);
 const showBenchmarksModal = ref(false);
 const showLeaderboardModal = ref(false);
 const showContactModal = ref(false);
 
-// 处理模态框点击事件
+// Handle modal open actions
 const handleIntroductionClick = () => {
   showIntroductionModal.value = true;
 };
@@ -143,7 +128,7 @@ const handleContactClick = () => {
 };
 
 const selectedExample = ref('')
-// Configuration.vue 发出的 event 会被上层捕获
+// Event emitted by Configuration.vue is captured at the parent
 function onExampleSelected(q: string) {
   selectedExample.value = q
 }
@@ -153,7 +138,7 @@ onMounted(() => {
   }
 })
 
-// 处理模态框关闭事件
+// Handle modal close actions
 const handleModalClose = (modalName: string) => {
   switch (modalName) {
     case 'introduction':
@@ -171,26 +156,26 @@ const handleModalClose = (modalName: string) => {
   }
 };
 
-// 处理问题提交
+// Handle question submission
 const handleQuestionSubmitted = (submittedQuestion: string) => {
   question.value = submittedQuestion;
 };
 
-// 处理配置变更
+// Handle configuration changes
 const handleConfigChanged = (newConfig: any) => {
   configData.value = newConfig;
 };
 
-// 计算是否可以开始分析
+// Determine if analysis can start
 const canStart = computed(() => {
   return question.value.trim() !== '' && 
          configData.value.selectedCheckboxTypes.length > 0;
 });
 
-// 开始分析
+// Start analysis
 const startAnalysis = () => {
   if (canStart.value) {
-    // 将问题和配置数据编码为URL参数
+    // Encode question and config as URL params
     const questionParam = encodeURIComponent(question.value);
     router.push({
       name: 'Faith',
@@ -326,7 +311,7 @@ body {
 }
 
 .footer-inner {
-  max-width: 1140px;  /* 和 BContainer 宽度接近 */
+  max-width: 1140px;  /* Close to BContainer width */
   margin: 0 auto;
   padding: 0 12px;
   display: flex;

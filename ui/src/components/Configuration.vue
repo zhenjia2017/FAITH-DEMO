@@ -275,9 +275,9 @@ const DEFAULTS: Record<number, number[]> = {
 }
 
 function clearAllErrors() {
-  // 清除整组错误提示
+  // Clear the entire group error message
   groupErr.value = ''
-  // 把每个输入框的标红全部去掉（长度与当前 inputs 数量一致）
+  // Remove all input highlights (length matches current inputs)
   invalidFlags.value = Array(evidenceDrafts.value.length).fill(false)
 }
 
@@ -294,7 +294,7 @@ function isStrictDescending(arr: number[]): boolean {
   }
   return true
 }
-// 默认 Yes；若 store 未定义，get 时回退到 'yes'
+// Default to Yes; if store is undefined, fall back to 'yes'
 const temporalPruning = computed<'yes' | 'no'>({
   get: () => (configStore as any).temporalPruning ?? 'yes',
   set: (v) => { (configStore as any).temporalPruning = v }
@@ -356,13 +356,13 @@ function emitIfChanged() {
 }
 onMounted(() => {
   const it = iteration.value
-  const need = it // 可编辑框数量 = iteration
+  const need = it // Editable input count equals iteration
 
   const fromStore = Array.isArray(configStore.gnnMaxOutputEvidences)
     ? configStore.gnnMaxOutputEvidences.slice(0, need)
     : []
 
-  // 若 store 里已有用户改过的值，则优先使用；否则用该 iteration 的默认
+  // If the store already has user overrides, prefer them; otherwise use the iteration default
   const desired =
     (fromStore.length === need && fromStore.every(v => Number.isFinite(v)))
       ? fromStore
@@ -379,8 +379,8 @@ onMounted(() => {
 watch(
   () => iteration.value,
   (it) => {
-    // 用户手动切换 iteration 时，按产品规则载入该档位默认并写回 store
-    seedDraftsByIteration(it) // 这里会用 DEFAULTS[it]
+    // When the user switches iteration manually, load that tier's default and write back to the store
+    seedDraftsByIteration(it) // This uses DEFAULTS[it]
     configStore.setGnnEvidences([...evidenceDrafts.value])
     emitIfChanged()
   },
@@ -426,14 +426,14 @@ const exampleList = [
 function selectExample(q: string) { emit('example-selected', q) }
 
 
-// 全部可选项
+// All selectable sources
 const ALL_SOURCES = ['text', 'kb', 'table', 'info'] as const
 
-// 错误信息 & 抑制一次性清除的标记
+// Error message & flag to suppress one-time clearing
 const infoSourceError = ref('')
 const suppressClearOnce = ref(false)
 
-// 初始检测：若为空则强制全选并提示（提示保留 2.5s）
+// Initial check: if empty, force-select all and show a notice (kept for 2.5s)
 onMounted(() => {
   const arr = selectedCheckboxTypes.value ?? []
   if (!Array.isArray(arr) || arr.length === 0) {
@@ -441,7 +441,7 @@ onMounted(() => {
     suppressClearOnce.value = true
     selectedCheckboxTypes.value = [...ALL_SOURCES]
     emitIfChanged()
-    // 延迟清除提示
+    // Clear the notice after a delay
     setTimeout(() => {
       infoSourceError.value = ''
       suppressClearOnce.value = false
@@ -451,7 +451,7 @@ onMounted(() => {
   }
 })
 
-// 监听 sources 变化：清空时提示并全选（同样保留 2.5s）
+// Watch sources: when cleared, show a notice and reselect all (kept for 2.5s)
 watch(
   () => selectedCheckboxTypes.value,
   (arr) => {
@@ -468,11 +468,11 @@ watch(
         }, 2500)
       })
     } else {
-      // 只有在不是“自动修复”的下一拍，才清除提示
+      // Only clear the notice if this change was not an auto-fix
       if (!suppressClearOnce.value) {
         infoSourceError.value = ''
       } else {
-        // 自动修复后的第一轮变更，保留提示但关闭抑制标志
+        // After an auto-fix, keep the notice for one change but turn off suppression
         suppressClearOnce.value = false
       }
     }

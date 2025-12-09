@@ -64,7 +64,7 @@
           </div>
         </div>
 
-        <!-- 单卡模式：一个折叠，内部依次为 Answers -> Evidences -> Question Understanding -> Evidences Retrieval -> Graphs -->
+        <!-- Single-card mode: one collapse containing Answers -> Evidences -> Question Understanding -> Evidences Retrieval -> Graphs -->
         <div
           class="col-12 mt-3"
           v-if="!isDual && (intermediateQuestionText || hasIntermediateInfo)"
@@ -190,7 +190,7 @@
                   </b-card>
 
                   <b-card class="QU-ER-HA no-hover">
-                    <!-- 单卡：Question Understanding（在 Evidences 之后） -->
+                    <!-- Single card: Question Understanding (after Evidences) -->
                     <div class="section mt-4 intermediate-section">
                       <h6 class="section-title">Question Understanding</h6>
                       <div class="row g-3 bg-white px-3 py-0 shadow-sm mt-3 rounded">
@@ -246,7 +246,7 @@
                       </div>
                     </div>
 
-                    <!-- 单卡：Evidences Retrieval（在 Understanding 之后） -->
+                    <!-- Single card: Evidences Retrieval (after Understanding) -->
                     <div class="section mt-4 intermediate-section">
                       <h6 class="section-title fw-bold">Evidences Retrieval</h6>
                       <div class="intermediate-charts">
@@ -271,7 +271,7 @@
                       </div>
                     </div>
 
-                    <!-- 单卡：Graphs -->
+                    <!-- Single card: Graphs -->
                     <div class="intermediate-graph-section mt-4" v-if="iterativeGraphs && iterativeGraphs.length">
                       <h3 id="singleCard" class="fw-bold h3-with-dash">
                         <span>Below are <span class="tp-emph">{{ totalPagesSingle }}</span> heterogeneous graphs:</span>
@@ -324,7 +324,7 @@
           </div>
         </div>
 
-        <!-- 双卡模式：一个总折叠，里面有两个子折叠（上下排列） -->
+        <!-- Dual-card mode: one outer collapse containing two sub-collapses (stacked) -->
         <div class="col-12 mt-3" v-if="isDual">
           <h6 class="text-muted fw-bold section-title">Implicit Question Resolver</h6>
 
@@ -338,7 +338,7 @@
               <div v-if="outerOpen" class="intermediate-details">
                 <div class="intermediate-details-content">
                   <h6 class="text-muted fw-bold section-title">The time values are derived from the following two generated questions.</h6>
-                  <!-- 子卡 1（前三页） -->
+                  <!-- Child card 1 (first three pages) -->
                   <p class="clickable-text mt-2" @click="toggleChild(1)">
                     {{ dualItems[0]?.question || '' }}
                     <i :class="['bi', child1Open ? 'bi-chevron-up' : 'bi-chevron-down']" class="ms-2"></i>
@@ -347,10 +347,10 @@
                   <transition name="slide-fade">
                     <div v-if="child1Open" class="subcard-body">
                       <div class="intermediate-details-content">
-                        <!-- 子卡1：Question Understanding（在 Evidences 之后，但为了结构清晰，先放位于此处，最终展示顺序仍按要求） -->
+                        <!-- Child 1: Question Understanding (logically after Evidences; placed here for structure while keeping final order) -->
                         
                         <b-card class="AR-SE no-hover">
-                          <!-- 子卡1：Ranked Answers -->
+                          <!-- Child 1: Ranked Answers -->
                           <div :class="['AR-SE-card', 'section', 'mt-2', 'no-hover', 'intermediate-section', { collapsed: !answersOpenC1 }]">
                             <h6 class="section-title header-toggle d-flex justify-content-between align-items-center" @click="toggleAnswersC1">
                               <span>Ranked Answers</span>
@@ -399,7 +399,7 @@
                             </transition>
                           </div>
 
-                          <!-- 子卡1：Supporting Evidences -->
+                          <!-- Child 1: Supporting Evidences -->
                           <div :class="['AR-SE-card', 'section', 'mt-2', 'no-hover', 'intermediate-section', { collapsed: !evidencesOpenC1 }]">
                             <h6 class="section-title header-toggle d-flex justify-content-between align-items-center" @click="toggleEvidencesC1">
                               <span>Supporting Evidences</span>
@@ -459,7 +459,7 @@
                         </b-card>
 
                         <b-card class="QU-ER-HA no-hover">
-                          <!-- 子卡1：Question Understanding（在 Supporting Evidences 后） -->
+                          <!-- Child 1: Question Understanding (after Supporting Evidences) -->
                           <div class="section mt-2 intermediate-section">
                             <h6 class="section-title">Question Understanding</h6>
                             <div class="row g-3 bg-white px-3 py-0 shadow-sm mt-3 rounded">
@@ -515,7 +515,7 @@
                             </div>
                           </div>
 
-                          <!-- 子卡1：Evidences Retrieval（在 Understanding 后） -->
+                          <!-- Child 1: Evidences Retrieval (after Understanding) -->
                           <div class="section mt-2 intermediate-section">
                             <h6 class="section-title fw-bold">Evidences Retrieval</h6>
                             <div class="intermediate-charts">
@@ -540,7 +540,7 @@
                             </div>
                           </div>
 
-                          <!-- 子卡1：Graphs (first 3 pages) -->
+                          <!-- Child 1: Graphs (first 3 pages) -->
                           <div class="intermediate-graph-section mt-3" v-if="firstGraphs.length">
                             <h3 id="Page1" class="fw-bold h3-with-dash">
                               <span>Below are <span class="tp-emph">{{ totalPages1 }}</span> heterogeneous graphs:</span>
@@ -591,7 +591,7 @@
                   </transition>
 
 
-                  <!-- 子卡 2（后三页） -->
+                  <!-- Child card 2 (last three pages) -->
                   <p class="clickable-text mt-2" @click="toggleChild(2)">
                     {{ dualItems[1]?.question || '' }}
                     <i :class="['bi', child2Open ? 'bi-chevron-up' : 'bi-chevron-down']" class="ms-2"></i>
@@ -601,7 +601,7 @@
                     <div v-if="child2Open" class="subcard-body">
                       <div class="intermediate-details-content">
                         <b-card class="AR-SE no-hover">
-                          <!-- 子卡2：Ranked Answers -->
+                          <!-- Child 2: Ranked Answers -->
                           <div :class="['AR-SE-card', 'section', 'mt-2', 'no-hover', 'intermediate-section', { collapsed: !answersOpenC2 }]">
                             <h6 class="section-title header-toggle d-flex justify-content-between align-items-center" @click="toggleAnswersC2">
                               <span>Ranked Answers</span>
@@ -650,7 +650,7 @@
                             </transition>
                           </div>
 
-                          <!-- 子卡2：Supporting Evidences -->
+                          <!-- Child 2: Supporting Evidences -->
                           <div :class="['AR-SE-card', 'section', 'mt-2', 'no-hover', 'intermediate-section', { collapsed: !evidencesOpenC2 }]">
                             <h6 class="section-title header-toggle d-flex justify-content-between align-items-center" @click="toggleEvidencesC2">
                               <span>Supporting Evidences</span>
@@ -710,7 +710,7 @@
                         </b-card>
 
                         <b-card class="QU-ER-HA no-hover">
-                          <!-- 子卡2：Question Understanding（在 Supporting Evidences 后） -->
+                          <!-- Child 2: Question Understanding (after Supporting Evidences) -->
                           <div class="section mt-2 intermediate-section">
                             <h6 class="section-title">Question Understanding</h6>
                             <div class="row g-3 bg-white px-3 py-0 shadow-sm mt-3 rounded">
@@ -766,7 +766,7 @@
                             </div>
                           </div>
 
-                          <!-- 子卡2：Evidences Retrieval（在 Understanding 后） -->
+                          <!-- Child 2: Evidences Retrieval (after Understanding) -->
                           <div class="section mt-2 intermediate-section">
                             <h6 class="section-title fw-bold">Evidences Retrieval</h6>
                             <div class="intermediate-charts">
@@ -791,7 +791,7 @@
                             </div>
                           </div>
 
-                          <!-- 子卡2：Graphs (last 3 pages) -->
+                          <!-- Child 2: Graphs (last 3 pages) -->
                           <div class="intermediate-graph-section mt-3" v-if="lastGraphs.length">
                             <h3 id="Page2" class="fw-bold h3-with-dash">
                               <span>Below are <span class="tp-emph">{{ totalPages2 }}</span> heterogeneous graphs:</span>
@@ -847,7 +847,7 @@
             </transition>
           </div>
         </div>
-        <!-- /双卡模式 -->
+        <!-- /Dual-card mode -->
       </div>
     </div>
   </div>
@@ -876,7 +876,7 @@ interface Evidence {
 }
 
 const props = withDefaults(defineProps<{
-  /* 外层（或单卡） */
+  /* Outer (or single-card) */
   question: string
   temporalInfo: TemporalInfo
   intermediateQuestionText: string
@@ -887,7 +887,7 @@ const props = withDefaults(defineProps<{
   iterativeGraphs?: GraphData[]
   currentIntermediatePage?: number
 
-  /* 单卡饼图统计 */
+  /* Single-card pie stats */
   intermediateInitialEvidencesLength?: number
   intermediateInitialEvidencesSource?: Record<string, number>
   intermediatePrunedEvidencesLength?: number
@@ -895,7 +895,7 @@ const props = withDefaults(defineProps<{
   intermediateTopkEvidencesLength?: number
   intermediateTopkEvidencesSource?: Record<string, number>
 
-  /* 双卡 */
+  /* Dual-card */
   hasDual?: boolean
   dualItems?: Array<{
     question: string
@@ -911,7 +911,7 @@ const props = withDefaults(defineProps<{
     topkEvidencesSource?: Record<string, number>
   }>
 
-  /* 覆盖外层 Answer type（如 intermediate_q_answer_type） */
+  /* Override outer answer type (e.g., intermediate_q_answer_type) */
   overrideAnswerType?: string
 }>(), {
   question: '',
@@ -949,27 +949,27 @@ const props = withDefaults(defineProps<{
   overrideAnswerType: ''
 })
 
-/** —— 判定 —— */
+/** — Determinations — */
 const isDual = computed(
   () => props.hasDual && Array.isArray(props.dualItems) && props.dualItems.length === 2
 )
 
-/** —— 折叠控制 —— */
-const outerOpen = ref(false)   // 单卡/双卡总折叠
-const child1Open = ref(false)  // 子卡1
-const child2Open = ref(false)  // 子卡2
+/** — Collapse control — */
+const outerOpen = ref(false)   // Single/Dual outer collapse
+const child1Open = ref(false)  // Child 1
+const child2Open = ref(false)  // Child 2
 function toggleOuter() {
   outerOpen.value = !outerOpen.value
   if (outerOpen.value) {
-    // 打开时初始化单卡饼图（仅单卡时）
+    // When opened, initialize single-card pies (single mode only)
     if (!isDual.value) initSinglePies()
   } else {
-    // 关闭总折叠，清理单卡饼图
+    // When closed, dispose single-card pies
     disposeGroup('single')
   }
 }
 
-/** —— 单卡模式分页 —— */
+/** — Single-card pagination — */
 const pageSingle = ref(props.currentIntermediatePage || 1)
 const totalPagesSingle = computed(() => props.iterativeGraphs?.length || 0)
 const currentGraphSingle = computed(() => {
@@ -979,7 +979,7 @@ const currentGraphSingle = computed(() => {
 function goPrevSingle() { if (pageSingle.value > 1) pageSingle.value-- }
 function goNextSingle() { if (pageSingle.value < totalPagesSingle.value) pageSingle.value++ }
 
-/** —— 双卡图分页：前3/后3 —— */
+/** — Dual-card graphs pagination: first 3 / last 3 — */
 const firstGraphs = computed(() => (props.iterativeGraphs || []).slice(0, 3))
 const lastGraphs  = computed(() => {
   const arr = props.iterativeGraphs || []
@@ -997,27 +997,27 @@ const currentGraph2 = computed(() => lastGraphs.value[page2.value - 1] || null)
 function goPrev2() { if (page2.value > 1) page2.value-- }
 function goNext2() { if (page2.value < totalPages2.value) page2.value++ }
 
-/** —— 是否显示单卡折叠 —— */
+/** — Whether to show single-card collapse — */
 const hasIntermediateInfo = computed(() => {
   const t = props.intermediateTemporalInfo || {}
   return Object.keys(t).length > 0 || (props.answers?.length ?? 0) > 0 || (props.evidences?.length ?? 0) > 0
 })
 
-/** —— 饼图：refs —— */
-/* 单卡 */
+/** — Pie charts: refs — */
+/* Single card */
 const sInitRef = ref<HTMLElement | null>(null)
 const sPruneRef = ref<HTMLElement | null>(null)
 const sTopkRef  = ref<HTMLElement | null>(null)
-/* 子卡1 */
+/* Child 1 */
 const c1InitRef = ref<HTMLElement | null>(null)
 const c1PruneRef = ref<HTMLElement | null>(null)
 const c1TopkRef  = ref<HTMLElement | null>(null)
-/* 子卡2 */
+/* Child 2 */
 const c2InitRef = ref<HTMLElement | null>(null)
 const c2PruneRef = ref<HTMLElement | null>(null)
 const c2TopkRef  = ref<HTMLElement | null>(null)
 
-/** —— 饼图实例分组管理 —— */
+/** — Pie chart instance group management — */
 const chartGroups: Record<'single' | 'c1' | 'c2', echarts.ECharts[]> = {
   single: [],
   c1: [],
@@ -1032,7 +1032,7 @@ function resizeAll() {
   ;(['single','c1','c2'] as const).forEach(g => chartGroups[g].forEach(c => c.resize()))
 }
 
-/** —— 渲染饼图 —— */
+/** — Render pie chart — */
 function renderPie(el: HTMLElement, dataObj: Record<string, number>) {
   const inst = echarts.init(el)
   const data = [
@@ -1060,7 +1060,7 @@ function renderPie(el: HTMLElement, dataObj: Record<string, number>) {
   return inst
 }
 
-/** —— 初始化各组饼图 —— */
+/** — Initialize pie groups — */
 async function initSinglePies() {
   await nextTick()
   disposeGroup('single')
@@ -1083,7 +1083,7 @@ async function initChildPies(which: 1 | 2) {
   }
 }
 
-/** —— 子折叠切换 —— */
+/** — Child collapse toggles — */
 function toggleChild(which: 1 | 2) {
   if (which === 1) {
     child1Open.value = !child1Open.value
@@ -1096,7 +1096,7 @@ function toggleChild(which: 1 | 2) {
   }
 }
 
-/** —— 监听与清理 —— */
+/** — Watchers & cleanup — */
 if (typeof window !== 'undefined') {
   window.addEventListener('resize', resizeAll)
 }
@@ -1109,7 +1109,7 @@ onUnmounted(() => {
   disposeGroup('c2')
 })
 
-/** —— 小工具 —— */
+/** — Utilities — */
 function toOrdinal(n: number): string {
   const s = ['th', 'st', 'nd', 'rd'] as const
   const v = n % 100
@@ -1138,19 +1138,19 @@ const getSourceName = (source?: string): string => {
   const map: Record<string, string> = { kb: 'Kb', text: 'Text', table: 'Table', web: 'Web', NERD: 'NERD', info: 'Info' }
   return map[source] || 'Unknown source'
 }
-// —— 折叠状态（单卡）——
+// Collapse state (single card)
 const answersOpenSingle = ref(false)
 const evidencesOpenSingle = ref(false)
 function toggleAnswersSingle() { answersOpenSingle.value = !answersOpenSingle.value }
 function toggleEvidencesSingle() { evidencesOpenSingle.value = !evidencesOpenSingle.value }
 
-// —— 折叠状态（双卡 child1）——
+// Collapse state (dual card child1)
 const answersOpenC1 = ref(false)
 const evidencesOpenC1 = ref(false)
 function toggleAnswersC1() { answersOpenC1.value = !answersOpenC1.value }
 function toggleEvidencesC1() { evidencesOpenC1.value = !evidencesOpenC1.value }
 
-// —— 折叠状态（双卡 child2）——
+// Collapse state (dual card child2)
 const answersOpenC2 = ref(false)
 const evidencesOpenC2 = ref(false)
 function toggleAnswersC2() { answersOpenC2.value = !answersOpenC2.value }
@@ -1174,19 +1174,19 @@ function topEvidenceTexts(
   if (!Array.isArray(evs) || !evs.length) return []
   return evs
     .filter(e => !allowed || allowed.includes(e.source))
-    .slice() // 拷贝
+    .slice() // copy
     .sort((a, b) => (b.score ?? 0) - (a.score ?? 0))
     .slice(0, k)
     .map(e => stripHtmlToText(e.text))
     .filter(Boolean)
 }
 
-// —— 单卡：证据前五 —— 
+// Single card: top 5 evidences
 const topEvidenceTextsSingle = computed(() =>
   topEvidenceTexts(props.evidences, props.selectedTypes, TOPK)
 )
 
-// —— 双卡 child1 / child2：证据前五 ——
+// Dual card child1 / child2: top 5 evidences
 const topEvidenceTextsC1 = computed(() =>
   topEvidenceTexts(props.dualItems?.[0]?.evidences as any, props.selectedTypes, TOPK)
 )
@@ -1197,7 +1197,7 @@ type HighlightSpec =
   | { kind: 'candidate_text'; texts: string[] }
   | { kind: 'answers'; ids: string[] }
 
-// —— 单卡：前两页按证据文本高亮；最后一页按答案 id 高亮
+// Single card: first two pages highlight evidence text; last page highlights answer ids
 const highlightSingle = computed<HighlightSpec | undefined>(() => {
   if (pageSingle.value < totalPagesSingle.value) {
     return { kind: 'candidate_text', texts: topEvidenceTextsSingle.value }
@@ -1209,7 +1209,7 @@ const highlightSingle = computed<HighlightSpec | undefined>(() => {
   return undefined
 })
 
-// —— 子卡1
+// Child 1
 const highlightC1 = computed<HighlightSpec | undefined>(() => {
   if (page1.value < totalPages1.value) {
     return { kind: 'candidate_text', texts: topEvidenceTextsC1.value }
@@ -1221,7 +1221,7 @@ const highlightC1 = computed<HighlightSpec | undefined>(() => {
   return undefined
 })
 
-// —— 子卡2
+// Child 2
 const highlightC2 = computed<HighlightSpec | undefined>(() => {
   if (page2.value < totalPages2.value) {
     return { kind: 'candidate_text', texts: topEvidenceTextsC2.value }
@@ -1346,7 +1346,7 @@ const highlightC2 = computed<HighlightSpec | undefined>(() => {
   text-decoration: none; 
 }
 
-/* 饼图布局 */
+/* Pie chart layout */
 .intermediate-charts {
   display: flex;
   justify-content: space-between;
@@ -1382,7 +1382,7 @@ const highlightC2 = computed<HighlightSpec | undefined>(() => {
   color: #6c757d; 
 }
 
-/* 子折叠容器：上下排列 */
+/* Sub-collapse container: stacked vertically */
 .subcard-wrap {
   background: #ffffff;
   border: 1px solid #e5e7eb;

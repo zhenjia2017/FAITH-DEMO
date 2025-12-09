@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
-// 由于组件没有默认导出，使用具名导入
+// Use named import because the component has no default export
 import IntermediateQuestionPage from '../components/IntermediateQuestionPage.vue';
 import GuideView from '../views/GuideView.vue';
 import App from '../App.vue';

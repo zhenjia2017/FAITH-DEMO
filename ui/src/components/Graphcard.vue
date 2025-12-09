@@ -33,11 +33,11 @@ const props = withDefaults(defineProps<{
   graphData?: any
   isCollapsed?: boolean
 
-  /** 若父组件用 props 传递索引与总数（推荐 0 基索引） */
+  /** If parent passes index/count via props (recommended zero-based index) */
   panelIndex?: number
   panelCount?: number
 
-  /** 若父组件有“保存图数量/索引”的函数，可通过这两个 provider 接入（优先级最高） */
+  /** If parent provides functions for count/index, use these providers (highest priority) */
   totalProvider?: () => number
   indexProvider?: () => number
 
@@ -45,11 +45,11 @@ const props = withDefaults(defineProps<{
   rankedHighlightColor?: string
   rankedMax?: number
 
-  /** 若父组件直接告知“就是最后一张”，作为兜底（优先级最低） */
+  /** If parent explicitly says this is the last panel (lowest priority fallback) */
   isFinal?: boolean
 
   highlight?: HighlightSpec
-  /** 非最后一张图时，按分数高亮的证据数量 */
+  /** For non-final panels, number of evidences highlighted by score */
   evidenceHighlightTopK?: number
 }>(), {
   isCollapsed: false,
@@ -73,7 +73,7 @@ const isCollapsed = ref(props.isCollapsed)
 
 watch(() => props.isCollapsed, (v) => { if (v !== undefined) isCollapsed.value = v })
 
-/** 解析索引与总数的单一来源（避免 0/1 基混用导致的歧义） */
+/** Resolve index/count from a single source to avoid 0/1-based ambiguity */
 const resolvedCount = computed<number | undefined>(() => {
   try {
     const v = props.totalProvider?.()
@@ -92,10 +92,10 @@ const resolvedIndex = computed<number | undefined>(() => {
   return undefined
 })
 
-/** 最后一张的判定策略（严格单一来源）：
- *  1) 若有 count & index，则只按 0 基规则：index === count - 1
- *  2) 否则若 isFinal 为 true，则使用 isFinal
- *  3) 否则视为非最后一张
+/** Final-panel decision (single-source rules):
+ *  1) If count & index exist, use zero-based: index === count - 1
+ *  2) Else if isFinal is true, use isFinal
+ *  3) Otherwise treat as not final
  */
 const isFinalPanel = computed<boolean>(() => {
   if (resolvedCount.value !== undefined && resolvedIndex.value !== undefined) {
@@ -104,7 +104,7 @@ const isFinalPanel = computed<boolean>(() => {
   return !!props.isFinal
 })
 
-// 任何数据/高亮依据变化都重新渲染
+// Re-render whenever data/highlight basis changes
 watch(
   [() => props.graphData, () => props.rankedAnswers, () => props.highlight, isFinalPanel, resolvedCount, resolvedIndex],
   () => { if (props.graphData) updateChart(props.graphData) },
@@ -126,7 +126,7 @@ const toggleGraph = (_e?: MouseEvent) => {
   setTimeout(() => chart?.resize(), 300)
 }
 
-// ---------- 工具 & 样式 ----------
+// ---------- Utilities & Styles ----------
 
 const normalizeText = (s: string) =>
   (s ?? '')
@@ -135,15 +135,15 @@ const normalizeText = (s: string) =>
     .replace(/\s+/g, ' ')
     .trim()
 
-// 根据 App.vue 中饼图的颜色配置
+// Follow the pie-chart color scheme from App.vue
 const getEvidenceColor = (source?: string): string => {
   const colors: Record<string, string> = {
-    'kb': '#5470C6',      // 蓝色
-    'text': '#91CC75',    // 绿色
-    'table': '#FAC858',   // 黄色
-    'info': '#9A60B4'     // 紫色
+    'kb': '#5470C6',      // blue
+    'text': '#91CC75',    // green
+    'table': '#FAC858',   // yellow
+    'info': '#9A60B4'     // purple
   }
-  return colors[source || ''] || '#808080' // 默认灰色
+  return colors[source || ''] || '#808080' // default gray
 }
 
 const getColor = (type: string, source?: string) => {
@@ -151,12 +151,12 @@ const getColor = (type: string, source?: string) => {
     return getEvidenceColor(source)
   }
   if (type === 'wikidata_entity' || type === 'tempinfo') {
-    return '#808080' // 灰色
+    return '#808080' // gray
   }
-  return '#808080' // 默认灰色
+  return '#808080' // default gray
 }
 
-// 生成更深版本的颜色（用于强调）
+// Generate a darker color variant for emphasis
 function darkenColor(hex: string, percent: number = 30): string {
   const num = parseInt(hex.replace('#', ''), 16)
   const r = Math.max(0, Math.min(255, Math.round(((num >> 16) & 0xff) * (1 - percent / 100))))
@@ -238,19 +238,19 @@ const getNodeSymbol = (
   source?: string,
   node?: { attributes?: { wikidata_id?: string } }
 ) => {
-  // 证据节点统一用正方形
+  // Evidence nodes use squares
   if (type === 'evidence_text') {
     return 'rect'
   }
-  // entity 节点统一用圆形
+  // Entity nodes use circles
   if (type === 'wikidata_entity') {
     return 'circle'
   }
-  // temporal info 用三角形
+  // Temporal info uses triangles
   if (type === 'tempinfo') {
     return 'triangle'
   }
-  // 其他类型默认圆形
+  // Other types default to circle
   return 'circle'
 }
 
@@ -329,7 +329,7 @@ const formatTooltip = (data: any) => {
   ].join('<br>')
 }
 
-// ---------- 高亮匹配 ----------
+// ---------- Highlight matching ----------
 interface Evidence {
   normText: string
   score: number
@@ -340,7 +340,7 @@ type HighlightSets =
   | { mode: 'answers';        texts: Set<string>; ids: Set<string>; labels: Set<string> }
 
 function buildHighlightSets(data: any): HighlightSets {
-  // 1) 显式传入的 highlight 优先
+  // 1) Explicit highlight takes priority
   if (props.highlight?.kind === 'candidate_text') {
     const texts = new Set<string>((props.highlight.texts || []).map(normalizeText))
     return { mode: 'candidate_text', texts, ids: new Set<string>(), labels: new Set<string>() }
@@ -350,7 +350,7 @@ function buildHighlightSets(data: any): HighlightSets {
     return { mode: 'answers', texts: new Set<string>(), ids, labels: new Set<string>() }
   }
 
-  // 2) 未传 highlight：最后一张图强调实体答案
+  // 2) No highlight provided: final panel emphasizes entity answers
   if (isFinalPanel.value) {
     const topAnswers = (props.rankedAnswers || []).slice(0, props.rankedMax)
     const ids    = new Set<string>(topAnswers.map(a => String(a?.id || '')).filter(Boolean))
@@ -358,7 +358,7 @@ function buildHighlightSets(data: any): HighlightSets {
     return { mode: 'answers', texts: new Set<string>(), ids, labels }
   }
 
-  // 3) 其余图强调证据（按 score 取前 K）
+  // 3) Other panels emphasize evidences (top K by score)
   const K = Math.max(1, Number(props.evidenceHighlightTopK) || 5)
   const evidences: Evidence[] = (data?.nodes || [])
     .filter((n: any) => n?.attributes?.type === 'evidence_text')
@@ -401,7 +401,7 @@ function isNodeHighlightedByAnswers(node: any, ids: Set<string>, labels: Set<str
   return false
 }
 
-// ---------- 渲染 ----------
+// ---------- Render ----------
 
 const updateChart = (data: any) => {
   if (!chart || !data) return
@@ -410,11 +410,11 @@ const updateChart = (data: any) => {
   const evidenceTextCount = data.nodes?.filter((n: any) => n.attributes?.type === 'evidence_text').length || 0
 
   const hiSpec: HighlightSets = buildHighlightSets(data)
-  // 高亮颜色将根据节点本身的颜色动态生成
+  // Highlight colors derive from each node's base color
   const highlightedGraphNodeIdSet = new Set<string>()
-  const nodeHighlightColors = new Map<string, string>() // 存储每个节点的高亮颜色
+  const nodeHighlightColors = new Map<string, string>() // store per-node highlight color
 
-  // tooltip 的类型修复
+  // Tooltip type fix
   const tooltipFormatter: echarts.TooltipComponentOption['formatter'] = (params) => {
     const p: any = Array.isArray(params) ? params[0] : params
     return p?.dataType === 'edge' ? '' : formatTooltip(p?.data)
@@ -488,7 +488,7 @@ const updateChart = (data: any) => {
         else if (source === 'info')           categoryIndex = 5
 
         const nodeColor = getColor(type, source)
-        // 根据 category 确定 symbol：Temporal Info category 统一使用三角形
+        // Determine symbol by category: Temporal Info uses triangles
         let nodeSymbol = getNodeSymbol(node.attributes?.type, node.attributes?.source, node)
         if (categoryIndex === 1) { // Temporal Info category
           nodeSymbol = 'triangle'
@@ -514,7 +514,7 @@ const updateChart = (data: any) => {
           }
         }
 
-        // —— 高亮规则 —— //
+        // Highlight rules
         const hit = (hiSpec.mode === 'candidate_text')
           ? isNodeHighlightedByCandidate(node, hiSpec.texts)
           : isNodeHighlightedByAnswers(node, hiSpec.ids, hiSpec.labels)
@@ -522,7 +522,7 @@ const updateChart = (data: any) => {
         if (hit) {
           if (node?.id != null) {
             highlightedGraphNodeIdSet.add(String(node.id))
-            // 存储该节点的高亮颜色（使用节点本身颜色的更深版本）
+            // Store node highlight color (darker variant of its base color)
             nodeHighlightColors.set(String(node.id), darkenColor(nodeColor, 30))
           }
           base.symbolSize = Math.round(base.symbolSize * 1.15)
@@ -547,8 +547,8 @@ const updateChart = (data: any) => {
 
         const baseWidth = Math.max(1, Math.min(2.5, Math.pow(link.value || 1, 0.6) * 1.5))
 
-        // 如果边连接了高亮节点，使用该节点的高亮颜色
-        let highlightLinkColor = '#74A160' // 默认高亮色
+        // If an edge touches a highlighted node, reuse that node's highlight color
+        let highlightLinkColor = '#74A160' // default highlight color
         if (touchHi) {
           const fromColor = nodeHighlightColors.get(from)
           const toColor = nodeHighlightColors.get(to)
@@ -607,7 +607,7 @@ const updateChart = (data: any) => {
     }]
   }
 
-  // 关键：不合并，避免高亮状态残留
+  // Important: do not merge options to avoid stale highlight state
   chart.setOption(option, true)
 }
 

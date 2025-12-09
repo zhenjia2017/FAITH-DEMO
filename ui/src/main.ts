@@ -5,7 +5,7 @@ import BootstrapVue3 from 'bootstrap-vue-3'
 import * as echarts from 'echarts'
 import { createPinia } from 'pinia'
 
-// 导入样式
+// Import styles
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue-3/dist/bootstrap-vue-3.css'
 import 'bootstrap/dist/js/bootstrap.bundle.min.js'
@@ -16,10 +16,10 @@ const app = createApp(RootApp)
 const pinia = createPinia()
 app.use(pinia)
 
-// 全局挂载 echarts
+// Globally mount echarts
 app.config.globalProperties.$echarts = echarts
 
-// 使用插件
+// Use plugins
 app.use(router)
 app.use(BootstrapVue3)
 

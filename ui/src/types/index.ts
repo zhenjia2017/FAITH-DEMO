@@ -74,7 +74,7 @@ export interface GraphLink {
   label:  string | null;
 }
 
-/** 对应 GEXF 解析后的一张图的数据格式 */
+/** Data format for one graph parsed from GEXF */
 export interface GraphData {
   nodes: GraphNode[];
   links: GraphLink[];

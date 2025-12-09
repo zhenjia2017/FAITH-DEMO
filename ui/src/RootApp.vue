@@ -3,11 +3,11 @@
 </template>
 
 <script setup lang="ts">
-// 根组件，仅用于管理路由视图
+// Root component solely for routing views
 </script>
 
 <style>
-/* 全局样式可以放在这里 */
+/* Global styles can go here */
 :root {
   --primary-color: #2c3e50;
   --secondary-color: #3498db;

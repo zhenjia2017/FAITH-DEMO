@@ -200,36 +200,7 @@ def json_to_gexf(json_data):
                         weight=evidence.get("score", 1.0),
                         label="supports"
                     )
-
-        # # --- 处理结构化时间信息 ---
-        # if structured_temporal:
-        #     temporal_values = []
-        #     for rng in structured_temporal.get("temporal_value", []):
-        #         if isinstance(rng, list) and len(rng) == 2:
-        #             temporal_values.append(rng)
-        #     temporal_node_id = f"n{current_id}"
-        #     current_id += 1
-        #     temp_meta = {
-        #         "node_id": temporal_node_id,
-        #         "label": f"时间信息: {structured_temporal.get('temporal_signal','')}",
-        #         "type": "tempinfo",
-        #         "category": structured_temporal.get("category",""),
-        #         "answer_type": structured_temporal.get("answer_type",""),
-        #         "temporal_signal": structured_temporal.get("temporal_signal",""),
-        #         "temporal_value": json.dumps(temporal_values)
-        #     }
-        #     G.add_node(temporal_node_id, **temp_meta)
-        #     ent_label = structured_temporal.get("entity","")
-        #     if ent_label in label_to_wikidataID:
-        #         eid = label_to_wikidataID[ent_label]
-        #         if eid in entity_nodes:
-        #             G.add_edge(
-        #                 temporal_node_id,
-        #                 entity_nodes[eid]["node_id"],
-        #                 weight=1.0,
-        #                 label=structured_temporal.get("relation","")
-        #             )
-
+                    
         # --- 定义节点属性 ---
         attr_list = [
             ('type','string'),('wikidata_id','string'),('entity_type','string'),
@@ -571,7 +542,6 @@ def process_question():
         result['iterativeScoredEvidencesGexf'] = iterative_gexfs
     
     return jsonify(result)
-
 
 
 

@@ -137,10 +137,10 @@ async function handleQuestionAnswer() {
     return
   }
 
-  // 更新历史
+  // Update history
   history.value = [q, ...history.value.filter(item => item !== q)].slice(0, 10)
 
-  // 若不在 Guide，先跳转
+  // If not on Guide, navigate first
   if (route.name !== 'Guide') {
     await router.push({ name: 'Guide', query: { APPquestion: q } })
     return
@@ -150,17 +150,17 @@ async function handleQuestionAnswer() {
   answerStatus.value = { type: 'info', message: 'Analyzing question...' }
 
   try {
-    // 关键：统一提交配置面板里的输入（即使仍在 focus）
+    // Key: commit inputs from the config panel even if still focused
     configRef.value?.commitAllEvidences?.()
     await nextTick()
 
-    // 双保险：强制 blur 当前活动元素，让其触发 onBlur 写回
+    // Extra safety: force blur on the active element to trigger onBlur write-back
     const active = document.activeElement as HTMLElement | null
     if (active && typeof active.blur === 'function') active.blur()
     await new Promise((r) => requestAnimationFrame(() => r(null)))
     await nextTick()
 
-    // 读取 Pinia（已是最新值）
+    // Read Pinia store (already latest values)
     const cfgPayload = configStore.toPayloadObject()
 
     const bodyData = {
@@ -181,7 +181,7 @@ async function handleQuestionAnswer() {
     })
 
     if (!response.ok) {
-      // 尝试读取后端的错误信息
+      // Try to read the error message from the backend
       let msg = 'Failed to process question'
       try {
         const errJson = await response.json()
@@ -202,12 +202,12 @@ async function handleQuestionAnswer() {
   }
 }
 
-/** 示例问题选择 */
+/** Sample question selection */
 function onExampleSelected(q: string) {
   questionInput.value = q
 }
 
-/** ========== 接收配置变更（去重写回 Store，避免循环） ========== */
+/** ========== Receive config changes (dedupe write-back to Store to avoid loops) ========== */
 function handleConfigChanged(newConfig: ConfigPayload) {
   if (!eqArr(configStore.selectedCheckboxTypes, newConfig.selectedCheckboxTypes)) {
     configStore.selectedCheckboxTypes = [...newConfig.selectedCheckboxTypes]
@@ -238,7 +238,7 @@ function handleConfigChanged(newConfig: ConfigPayload) {
 <style scoped>
 .input-wrapper { position: relative; }
 
-/* 下拉菜单 */
+/* Dropdown list */
 .history-list {
   position: absolute;
   top: 100%;
@@ -257,7 +257,7 @@ function handleConfigChanged(newConfig: ConfigPayload) {
 .history-list li { padding: 0.5rem; cursor: pointer; }
 .history-list li:hover { background: #f0f0f0; }
 
-/* 输入区域 */
+/* Input area */
 .input-area {
   display: flex;
   align-items: center;
@@ -278,7 +278,7 @@ function handleConfigChanged(newConfig: ConfigPayload) {
   outline: none;
 }
 
-/* 按钮 */
+/* Buttons */
 .btn-primary {
   padding: .75rem 1.5rem;
   font-size: 1rem;
@@ -290,18 +290,18 @@ function handleConfigChanged(newConfig: ConfigPayload) {
 .btn-primary:hover:not(:disabled) { background: #2b6cb0; }
 .btn-primary:disabled { background: #90cdf4; cursor: not-allowed; }
 
-/* 状态条 */
+/* Status bar */
 .answer-status { border-radius: 8px; overflow: hidden; }
 .alert { margin: 0; display: flex; align-items: center; }
 .alert i { font-size: 1.2rem; }
 
-/* 响应式 */
+/* Responsive */
 @media (max-width: 768px) {
   .input-area { flex-direction: column; }
   .btn-primary { width: 100%; }
 }
 
-/* 去除卡片 hover 效果 */
+/* Remove card hover effect */
 .no-hover { transition: none !important; box-shadow: none !important; }
 .no-hover:hover { box-shadow: none !important; transform: none !important; }
 </style>
