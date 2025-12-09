@@ -148,7 +148,8 @@ class ClocqRetriever:
                 # if self.use_cache and self.config.get("ers_update_clocq_cache", True):
                 self.cache_changed = True
                 self.cache[tsf] = copy.deepcopy(clocq_result)
-
+            
+            
         # get question entities (predicates dropped)
         question_entities = [
             item
@@ -156,6 +157,7 @@ class ClocqRetriever:
             if not item["item"]["id"] is None and ENT_PATTERN.match(item["item"]["id"])
         ]
 
+        
         question_items_set = set([item["item"]["id"] for item in clocq_result["kb_item_tuple"]])
 
         evidences = self._kb_fact_to_evidence_multithread(

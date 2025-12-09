@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Question Analysis System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .search-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        .search-box {
+            width: 70%;
+            padding: 12px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+        .search-button {
+            padding: 12px 24px;
+            font-size: 16px;
+            background-color: #4285F4;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .search-button:hover {
+            background-color: #3367D6;
+        }
+        .result-container {
+            display: none;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .section {
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        .section:last-child {
+            border-bottom: none;
+        }
+        .question-title {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        .match-score {
+            font-size: 14px;
+            color: #666;
+        }
+        .temporal-info {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+        .answer-item {
+            background-color: #e8f5e9;
+            padding: 10px 15px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            border-left: 4px solid #4CAF50;
+        }
+        .evidence-item {
+            background-color: #e3f2fd;
+            padding: 10px 15px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            border-left: 4px solid #2196F3;
+        }
+        .intermediate-question {
+            background-color: #fff3e0;
+            padding: 10px 15px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            border-left: 4px solid #FF9800;
+        }
+        .loading {
+            text-align: center;
+            padding: 40px;
+            display: none;
+        }
+        .spinner {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .error {
+            background-color: #ffebee;
+            color: #d32f2f;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        .tab-container {
+            margin-bottom: 20px;
+        }
+        .tab-buttons {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+        }
+        .tab-button {
+            padding: 10px 20px;
+            background-color: #f1f1f1;
+            border: none;
+            cursor: pointer;
+            margin-right: 2px;
+        }
+        .tab-button.active {
+            background-color: white;
+            border-bottom: 3px solid #4285F4;
+            font-weight: bold;
+        }
+        .tab-content {
+            display: none;
+            padding: 20px;
+            background-color: white;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        #graphContainer {
+            width: 100%;
+            height: 500px;
+            border: 1px solid #ddd;
+            background-color: #fafafa;
+        }
+        .evidence-source {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+        .evidence-score {
+            display: inline-block;
+            padding: 2px 6px;
+            background-color: #e8eaf6;
+            border-radius: 10px;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Temporal Question Analysis System</h1>
+        <p>Enter a question, the system will search for matching JSON files in the question_examples directory and display relevant analysis results</p>
+    </div>
+    
+    <div class="search-container">
+        <input type="text" id="questionInput" class="search-box" placeholder="Please enter your question..." />
+        <button id="analyzeButton" class="search-button">Analyze Question</button>
+    </div>
+    
+    <div id="loading" class="loading">
+        <div class="spinner"></div>
+        <p>Analyzing your question, please wait...</p>
+    </div>
+    
+    <div id="error" class="error"></div>
+    
+    <div id="resultContainer" class="result-container">
+        <div class="section">
+            <h2 id="questionTitle" class="question-title"></h2>
+            <p id="matchScore" class="match-score"></p>
+        </div>
+        
+        <div class="tab-container">
+            <div class="tab-buttons">
+                <button class="tab-button active" onclick="openTab('overviewTab')">Overview</button>
+                <button class="tab-button" onclick="openTab('answersTab')">Answer Ranking</button>
+                <button class="tab-button" onclick="openTab('evidencesTab')">Supporting Evidence</button>
+                <button class="tab-button" onclick="openTab('intermediateTab')">Intermediate Questions</button>
+                <button class="tab-button" onclick="openTab('graphTab')">Graph Visualization</button>
+            </div>
+            
+            <div id="overviewTab" class="tab-content active">
+                <div id="temporalInfo" class="temporal-info">
+                    <h3>Temporal Information</h3>
+                    <div id="temporalDetails"></div>
+                </div>
+                
+                <div id="questionUnderstanding">
+                    <h3>Question Understanding</h3>
+                    <div id="understandingDetails"></div>
+                </div>
+            </div>
+            
+            <div id="answersTab" class="tab-content">
+                <h3>Answer List</h3>
+                <div id="answersList"></div>
+            </div>
+            
+            <div id="evidencesTab" class="tab-content">
+                <h3>Supporting Evidence</h3>
+                <div id="evidencesList"></div>
+            </div>
+            
+            <div id="intermediateTab" class="tab-content">
+                <h3>Intermediate Questions</h3>
+                <div id="intermediateList"></div>
+            </div>
+            
+            <div id="graphTab" class="tab-content">
+                <h3>Graph Visualization</h3>
+                <div id="graphContainer"></div>
+                <p><small>Note: Graph visualization requires additional libraries such as ECharts or D3.js</small></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get DOM elements
+        const questionInput = document.getElementById('questionInput');
+        const analyzeButton = document.getElementById('analyzeButton');
+        const loadingElement = document.getElementById('loading');
+        const errorElement = document.getElementById('error');
+        const resultContainer = document.getElementById('resultContainer');
+        const questionTitle = document.getElementById('questionTitle');
+        const matchScore = document.getElementById('matchScore');
+        
+        // Tab switching function
+        function openTab(tabId) {
+            // Hide all tab contents
+            const tabContents = document.getElementsByClassName('tab-content');
+            for (let i = 0; i < tabContents.length; i++) {
+                tabContents[i].classList.remove('active');
+            }
+            
+            // Deactivate all tab buttons
+            const tabButtons = document.getElementsByClassName('tab-button');
+            for (let i = 0; i < tabButtons.length; i++) {
+                tabButtons[i].classList.remove('active');
+            }
+            
+            // Show selected tab content and activate button
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+        
+        // Analyze button click event
+        analyzeButton.addEventListener('click', analyzeQuestion);
+        
+        // Enter key triggers analysis
+        questionInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                analyzeQuestion();
+            }
+        });
+        
+        // Execute question analysis
+        function analyzeQuestion() {
+            const question = questionInput.value.trim();
+            if (!question) {
+                showError('Please enter a question to analyze');
+                return;
+            }
+            
+            // Show loading status
+            loadingElement.style.display = 'block';
+            errorElement.style.display = 'none';
+            resultContainer.style.display = 'none';
+            
+            // Using relative path for API URL
+            fetch(`/api/process-question?question=${encodeURIComponent(question)}`)
+                .then(response => {
+                    if (!response.ok) {
+                        if (response.status === 404) {
+                            return response.json().then(data => {
+                                throw new Error(data.message || 'No matching question found');
+                            });
+                        }
+                        throw new Error('Request failed');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    loadingElement.style.display = 'none';
+                    
+                    if (!data.success) {
+                        showError(data.message || 'Error while analyzing the question');
+                        return;
+                    }
+                    
+                    // Display analysis results
+                    displayResults(data);
+                })
+                .catch(error => {
+                    loadingElement.style.display = 'none';
+                    showError(error.message);
+                });
+        }
+        
+        // Display analysis results
+        function displayResults(data) {
+            // Show result container
+            resultContainer.style.display = 'block';
+            
+            // Display question title and match score
+            questionTitle.textContent = data.question || 'Unknown Question';
+            matchScore.textContent = `Match Score: ${(data.matchScore * 100).toFixed(2)}%`;
+            
+            // Display temporal information
+            const temporalDetails = document.getElementById('temporalDetails');
+            if (data.temporalInfo) {
+                const tempInfo = data.temporalInfo;
+                temporalDetails.innerHTML = `
+                    <p><strong>Entity:</strong> ${tempInfo.entity || 'None'}</p>
+                    <p><strong>Category:</strong> ${tempInfo.category || 'None'}</p>
+                    <p><strong>Relation:</strong> ${tempInfo.relation || 'None'}</p>
+                    <p><strong>Answer Type:</strong> ${tempInfo.answerType || 'None'}</p>
+                    <p><strong>Temporal Signal:</strong> ${tempInfo.temporalSignal || 'None'}</p>
+                `;
+                
+                if (tempInfo.temporalValues && tempInfo.temporalValues.length > 0) {
+                    let valuesHtml = '<p><strong>Temporal Values:</strong></p><ul>';
+                    tempInfo.temporalValues.forEach(value => {
+                        if (Array.isArray(value)) {
+                            valuesHtml += `<li>${value.join(' - ')}</li>`;
+                        } else {
+                            valuesHtml += `<li>${value}</li>`;
+                        }
+                    });
+                    valuesHtml += '</ul>';
+                    temporalDetails.innerHTML += valuesHtml;
+                }
+            } else {
+                temporalDetails.innerHTML = '<p>No temporal information</p>';
+            }
+            
+            // Display question understanding
+            const understandingDetails = document.getElementById('understandingDetails');
+            if (data.questionUnderstanding) {
+                understandingDetails.innerHTML = `<p>${data.questionUnderstanding}</p>`;
+            } else {
+                understandingDetails.innerHTML = '<p>No question understanding information</p>';
+            }
+            
+            // Display answer list
+            const answersList = document.getElementById('answersList');
+            if (data.answers && data.answers.length > 0) {
+                let answersHtml = '';
+                data.answers.forEach((answer, index) => {
+                    answersHtml += `
+                        <div class="answer-item">
+                            <h4>${index + 1}. ${answer.label || answer.id || 'Unnamed Answer'}</h4>
+                            <p>${answer.description || ''}</p>
+                            ${answer.score ? `<p>Score: ${answer.score}</p>` : ''}
+                        </div>
+                    `;
+                });
+                answersList.innerHTML = answersHtml;
+            } else {
+                answersList.innerHTML = '<p>No answer information</p>';
+            }
+            
+            // Display evidence list
+            const evidencesList = document.getElementById('evidencesList');
+            if (data.candidateEvidences && data.candidateEvidences.length > 0) {
+                let evidencesHtml = '';
+                data.candidateEvidences.forEach((evidence, index) => {
+                    evidencesHtml += `
+                        <div class="evidence-item">
+                            <h4>Evidence ${index + 1}</h4>
+                            <p>${evidence.evidence_text || 'No text'}</p>
+                            <div class="evidence-source">
+                                Source: ${evidence.source || 'Unknown'}
+                                ${evidence.score ? `<span class="evidence-score">Score: ${evidence.score}</span>` : ''}
+                                ${evidence.is_answering_evidence ? '<span class="evidence-score" style="background-color:#e8f5e9;">Answer Evidence</span>' : ''}
+                            </div>
+                        </div>
+                    `;
+                });
+                evidencesList.innerHTML = evidencesHtml;
+            } else {
+                evidencesList.innerHTML = '<p>No evidence information</p>';
+            }
+            
+            // Display intermediate questions
+            const intermediateList = document.getElementById('intermediateList');
+            if (data.intermediateQuestions && data.intermediateQuestions.length > 0) {
+                let intermediateHtml = '';
+                data.intermediateQuestions.forEach((question, index) => {
+                    intermediateHtml += `
+                        <div class="intermediate-question">
+                            <h4>${index + 1}. ${question.question || 'Unnamed Question'}</h4>
+                            ${question.answers && question.answers.length > 0 ? `
+                                <p><strong>Answers:</strong></p>
+                                <ul>
+                                    ${question.answers.map(ans => `<li>${ans.label || ans.id || 'Unnamed Answer'}</li>`).join('')}
+                                </ul>
+                            ` : ''}
+                        </div>
+                    `;
+                });
+                intermediateList.innerHTML = intermediateHtml;
+            } else {
+                intermediateList.innerHTML = '<p>No intermediate question information</p>';
+            }
+            
+            // Graph visualization (requires integration of visualization libraries)
+            const graphContainer = document.getElementById('graphContainer');
+            if (data.gexf) {
+                graphContainer.innerHTML = '<p>GEXF data has been generated, but requires visualization library support. Please integrate the appropriate graphics library for display.</p>';
+                // Here you can use a graphics library to parse GEXF data and display
+                // For example: renderGraph(data.gexf);
+            } else {
+                graphContainer.innerHTML = '<p>Unable to generate graph data</p>';
+                if (data.gexfError) {
+                    graphContainer.innerHTML += `<p>Error: ${data.gexfError}</p>`;
+                }
+            }
+        }
+        
+        // Display error message
+        function showError(message) {
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+        }
+    </script>
+</body>
+</html> 
