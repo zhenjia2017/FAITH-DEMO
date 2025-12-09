@@ -3,7 +3,7 @@
 
 ## Description
 ------
-This repo is for the FAITH demo. The video is available at [LINK](https://1drv.ms/v/c/3f6cea964af1d750/IQAp6_3JVXHQQ4PouE1rE0aSAZgAG7t4dOrthTNU_gE7VWk).
+This repo is for the FAITH demo. The video is available at [LINK](https://1drv.ms/v/c/3f6cea964af1d750/IQDe-vrfX-s2RJ3dx8J0sXWJAW0jAHbJF9H69tPfJT_O7PM).
 
 Temporal question answering (TQA) aims to answer questions that involve temporal constraints or require temporal information. We propose Faith, a novel TQA approach that operates over heterogeneous sources and ensures explainable answers by presenting traceable and faithful evidence. In Faith, we design a new recursive answering mechanism transforming implicit temporal constraints into explicit conditions.Additionally, we visualize the system functionality to track how the answers are computed and the supporting evidence is derived. 
 
